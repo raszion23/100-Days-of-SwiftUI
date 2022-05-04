@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var rootWord = ""
     // String that can be binded to a textfield
     @State private var newWord = ""
+    // Score string
+    @State private var score = 0
 
     // Alert properties
     @State private var errorTittle = ""
@@ -39,6 +41,15 @@ struct ContentView: View {
                         }
                     }
                 }
+                
+                
+                Section {
+                    HStack {
+                        Text("Score: ")
+                        Text("\(score)")
+                        
+                    }
+                }.frame(width: .infinity, height: .infinity, alignment: .bottom)
             }
             // Rootword is the title
             .navigationTitle(rootWord)
@@ -58,6 +69,15 @@ struct ContentView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(errorMessage)
+            }
+
+            // Add toolbar button to allow game reset
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Button("Restart") {
+                        restart()
+                    }
+                }
             }
         }
     }
@@ -85,6 +105,16 @@ struct ContentView: View {
 
         guard isReal(word: answer) else {
             wordError(title: "Word not recognized", message: "Try again")
+            return
+        }
+
+        guard isLongEnough(word: answer) else {
+            wordError(title: "Word is not long enough", message: "Word must be atleast 3 letters")
+            return
+        }
+
+        guard isNotRootWord(word: answer) else {
+            wordError(title: "Word is same as root word", message: "Try again")
             return
         }
 
@@ -118,7 +148,22 @@ struct ContentView: View {
 
     // Verify if word hasn't been used already
     func isOriginal(word: String) -> Bool {
-        !usedWords.contains(word)
+        if usedWords.contains(word) {
+            // Set newWord to an empty string
+            newWord = ""
+            return false
+        }
+        return true
+    }
+
+    // Check if word is same as rootWord
+    func isNotRootWord(word: String) -> Bool {
+        if word == rootWord {
+            // Set newWord to an empty string
+            newWord = ""
+            return false
+        }
+        return true
     }
 
     // Check whether a random word can be made out of the letters from rootWord
@@ -133,6 +178,8 @@ struct ContentView: View {
                 // Remove letter from tempWord
                 tempWord.remove(at: pos)
             } else {
+                // Set newWord to an empty string
+                newWord = ""
                 return false
             }
         }
@@ -149,8 +196,32 @@ struct ContentView: View {
         // Call rangeOfMisspelledWord() on UITextChecker to look for wrong words
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
 
+        // Set newWord to an empty string
+        newWord = ""
+
         // If word is correct
         return misspelledRange.location == NSNotFound
+    }
+
+    // Check length of word
+    func isLongEnough(word: String) -> Bool {
+        if word.count < 3 {
+            // Set newWord to an empty string
+            newWord = ""
+            return false
+        }
+
+        return true
+    }
+
+    // Restart game
+    func restart() {
+        // Call startGame function
+        startGame()
+        // Remove all words from usedWords array
+        usedWords.removeAll()
+        // Set newWord to an empty string
+        newWord = ""
     }
 
     // Alert

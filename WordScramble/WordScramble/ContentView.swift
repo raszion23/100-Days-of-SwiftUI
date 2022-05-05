@@ -41,15 +41,6 @@ struct ContentView: View {
                         }
                     }
                 }
-                
-                
-                Section {
-                    HStack {
-                        Text("Score: ")
-                        Text("\(score)")
-                        
-                    }
-                }.frame(width: .infinity, height: .infinity, alignment: .bottom)
             }
             // Rootword is the title
             .navigationTitle(rootWord)
@@ -71,11 +62,25 @@ struct ContentView: View {
                 Text(errorMessage)
             }
 
-            // Add toolbar button to allow game reset
             .toolbar {
-                ToolbarItem(placement: .bottomBar) {
+                // Add score to top of navigation bar
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack {
+                        Text("Score: ")
+                        Text("\(score)")
+                    }
+                }
+
+                // Add toolbar button to allow game reset
+                ToolbarItemGroup(placement: .bottomBar) {
                     Button("Restart") {
                         restart()
+                    }
+
+                    Spacer()
+
+                    Button("Next Word") {
+                        nextWord()
                     }
                 }
             }
@@ -122,6 +127,9 @@ struct ContentView: View {
         withAnimation {
             usedWords.insert(answer, at: 0)
         }
+
+        // Determine points for answer
+        scoreSystem(word: answer)
 
         // Set newWord to an empty string
         newWord = ""
@@ -222,6 +230,8 @@ struct ContentView: View {
         usedWords.removeAll()
         // Set newWord to an empty string
         newWord = ""
+        // Set score to zero
+        score = 0
     }
 
     // Alert
@@ -229,6 +239,26 @@ struct ContentView: View {
         errorTittle = title
         errorMessage = message
         showingError = true
+    }
+
+    // Track score
+    func scoreSystem(word: String) {
+        let pointSystem = [3: 1, 4: 2, 5: 3, 6: 4, 7: 5, 8: 8]
+        for (wordLen, points) in pointSystem {
+            if word.count == wordLen {
+                score += points
+            }
+        }
+    }
+
+    // Change rootWord
+    func nextWord() {
+        // Call startGame function
+        startGame()
+        // Remove all words from usedWords array
+        usedWords.removeAll()
+        // Set newWord to an empty string
+        newWord = ""
     }
 }
 

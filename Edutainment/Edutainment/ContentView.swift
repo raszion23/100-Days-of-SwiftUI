@@ -24,6 +24,14 @@ struct ContentView: View {
     @State private var alertMessage = ""
     // Show alert
     @State private var showingAlert = false
+    // Alert 2 title
+    @State private var alertTitle2 = ""
+    // Alert 2 message
+    @State private var alertMessage2 = ""
+    // Show alert 2
+    @State private var showingAlert2 = false
+    // Hold random number from 1 - 12
+    @State private var ranInt = 0
 
     var body: some View {
         NavigationView {
@@ -50,42 +58,68 @@ struct ContentView: View {
                 Section {
                     Text(question)
                     TextField("Enter Answer", text: $answer)
+                        .keyboardType(.numberPad)
                 }
 
                 // Check answer
                 Button(action: {
                     // Check answer
-                    calculate()
-                    // New question
-                    createQuestion()
-
+                    calculate(input: Int(answer) ?? 0)
                 }, label: {
                     Text("Submit")
                 })
             }
+            // Navigation bar title
             .navigationTitle("iMultiply")
         }
+        // When app loads, a question is created
         .onAppear {
             createQuestion()
         }
         // Show alert
         .alert(alertTitle, isPresented: $showingAlert) {
-            Button("OK") {
-                count = 1
-            }
+            Button("OK") {}
         } message: {
             Text(alertMessage)
+        }
+        // Show alert2
+        .alert(alertTitle2, isPresented: $showingAlert2) {
+            Button("OK") {}
+        } message: {
+            Text(alertMessage2)
         }
     }
 
     // Create questions
     func createQuestion() {
-        let ranInt = Int.random(in: 0 ... 12)
+        ranInt = Int.random(in: 0 ... 12)
         question = "\(multiplicationTable) x \(ranInt)"
     }
 
     // Check user's answer
-    func calculate() {
+    func calculate(input: Int) {
+        // Answer from question
+        let result = multiplicationTable * ranInt
+
+        // Determine if answer is correct
+        if input == result {
+            // Set alert title and message
+            alertTitle = "Correct!"
+            alertMessage = "Good Job!"
+            showingAlert = true
+
+        } else {
+            // Set alert title and message
+            alertTitle = "Wrong!"
+            alertMessage = "The correct answer is: \(result)!"
+            showingAlert = true
+        }
+
+        // Clear answer Textfield
+        answer = ""
+        // Call new question
+        createQuestion()
+        // Increase count
         counter()
     }
 
@@ -95,9 +129,10 @@ struct ContentView: View {
             count += 1
         } else {
             // Set alert title and messages
-            alertTitle = "Finished!"
-            alertMessage = "You have answered \(count) questions!"
-            showingAlert = true
+            alertTitle2 = "Finished!"
+            alertMessage2 = "You have answered \(count) questions!"
+            showingAlert2 = true
+            count = 1
         }
     }
 }

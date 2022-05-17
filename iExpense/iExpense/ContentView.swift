@@ -10,15 +10,27 @@ import SwiftUI
 struct ContentView: View {
     // Create instance of Expense class
     @StateObject var expenses = Expenses()
+    // Track if AddView is being shown
+    @State private var showingAddExpense = false
 
     var body: some View {
         // Create layout for items
         NavigationView {
             List {
                 // Identify each expenseItem by its name
-                ForEach(expenses.items, id: \.name) { item in
-                    // Displays the item's name on the list row
-                    Text(item.name)
+                ForEach(expenses.items) { item in
+                    HStack {
+                        VStack(alignment: .leading) {
+                            // Displays the item's name and type
+                            Text(item.name)
+                                .font(.headline)
+                            Text(item.type)
+                        }
+
+                        Spacer()
+                        // Displays the item's amount
+                        Text(item.amount, format: .currency(code: "USD"))
+                    }
                 }
                 // Delete itames
                 .onDelete(perform: removeItems)
@@ -28,14 +40,18 @@ struct ContentView: View {
 
             // Add toolbar button
             .toolbar {
-                // Button that adds an example of ExpenseItem
+                // Button that triggers AddView
                 Button {
-                    let expense = ExpenseItem(name: "Test", type: "Personal", amount: 5)
-                    expenses.items.append(expense)
+                    showingAddExpense = true
                 } label: {
                     Image(systemName: "plus")
                 }
             }
+        }
+        // Present AddView
+        .sheet(isPresented: $showingAddExpense) {
+            // Share expenses object with AddView
+            AddView(expenses: expenses)
         }
     }
 

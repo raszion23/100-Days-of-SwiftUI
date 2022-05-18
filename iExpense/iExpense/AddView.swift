@@ -9,15 +9,17 @@ import SwiftUI
 
 // View for adding new expense items
 struct AddView: View {
-    // Share existing Expense object from ContentView
-    @ObservedObject var expenses: Expenses
+    // Share existing Personal Expense object from ContentView
+    @ObservedObject var expenses: PersonalExpenses
+    // Share existing Business Expense object from ContentView
+    @ObservedObject var businessExpenses: BusinessExpenses
     // Dismiss AddView
     @Environment(\.dismiss) var dismiss
     
     // Name of expense item
     @State private var name = ""
     // Type of expense item
-    @State private var type = "Personal"
+    @State private var type = ""
     // Cost of expense item
     @State private var amount = 0.0
     
@@ -49,7 +51,12 @@ struct AddView: View {
             .toolbar {
                 Button("Save") {
                     let item = ExpenseItem(name: name, type: type, amount: amount)
-                    expenses.items.append(item)
+                    
+                    if item.type == "Personal" {
+                        expenses.personalItems.append(item)
+                    } else if item.type == "Business" {
+                        businessExpenses.businessItems.append(item)
+                    }
                     
                     // AddView dismiss itself
                     dismiss()
@@ -61,6 +68,6 @@ struct AddView: View {
 
 struct AddView_Previews: PreviewProvider {
     static var previews: some View {
-        AddView(expenses: Expenses())
+        AddView(expenses: PersonalExpenses(), businessExpenses: BusinessExpenses())
     }
 }

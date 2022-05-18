@@ -39,7 +39,7 @@ struct AddView: View {
                 }
                 
                 // Input for the amount of the expense item set in USD
-                TextField("Amount", value: $amount, format: .currency(code: "USD"))
+                TextField("Amount", value: $amount, format: .currency(code: expenses.usrRegionCode))
                     .keyboardType(.decimalPad)
             }
             // Title

@@ -37,4 +37,7 @@ class Expenses: ObservableObject {
         // If failed, set items to be an empty array
         items = []
     }
+    
+    // Use user's preferred currency
+    let usrRegionCode = Locale.current.currencyCode!
 }

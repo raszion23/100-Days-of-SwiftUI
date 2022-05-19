@@ -8,8 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
+    // Load astronauts.json into dictionary using type annotation
+    let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
+    // Load missions.json into array using type annotation
+    let missions: [Mission] = Bundle.main.decode("missions.json")
+
     var body: some View {
-        Text("Hello, world!")
+        Text("\(astronauts.count)")
             .padding()
     }
 }

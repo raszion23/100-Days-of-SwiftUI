@@ -12,13 +12,31 @@ import Foundation
 // Identifiable: Allows the mission data type to be identified uniquely
 // Nested CrewRole struct into Mission struct
 struct Mission: Codable, Identifiable {
+    
+    // Computed propery that holds the mission's name
+    var displayName: String {
+        "Apollo \(id)"
+    }
+    
+    // Computed property that holds the image for the mission
+    var image: String {
+        "apollo\(id)"
+    }
+    
+    // Computed property that converts date to a string
+    var formattedLaunchDate: String {
+        launchDate?.formatted(date: .abbreviated, time: .omitted) ?? "N/A"
+    }
+    
+    
+    
     struct CrewRole: Codable {
         let name: String
         let role: String
     }
 
     let id: Int
-    let launchDate: String?
+    let launchDate: Date?
     let crew: [CrewRole]
     let description: String
 }
